@@ -409,6 +409,61 @@ var MathImg = /** @class */ (function () {
         }
         return sal;
     };
+    MathImg.realce = function (img, factor) {
+        // Obtener el arreglo 3D de la imagen
+        var arrImage = img.getArrayImg();
+        // Crear el arreglo de salida
+        var sal = this.initArray(img.getWidth(), img.getHeight());
+        //recorrer atravez de la altura de la imagen
+        for (var i = 0; i < img.getHeight(); i++) {
+            for (var j = 0; j < img.getWidth(); j++) { //recorrer atravez del ancho  de la imagen
+                for (var k = 0; k < 3; k++) { // recorre atravez de los canales de color
+                    // aplicar el realce multiplicando el valor del pixel por el  factor
+                    sal[k][i][j] = arrImage[k][i][j] * factor;
+                    //  los valores estén en el rango 0 - 255
+                    sal[k][i][j] = Math.min(255, Math.max(0, sal[k][i][j]));
+                }
+            }
+        }
+        return sal;
+    };
+    MathImg.realce2 = function (img, ventanaTamanio, factor) {
+        // obtener el arreglo 3D de la imagen
+        var arrImage = img.getArrayImg();
+        var width = img.getWidth();
+        var height = img.getHeight();
+        var sal = this.initArray(width, height);
+        // recorrer atraves de la altura de la imagen
+        for (var i = 0; i < height; i++) {
+            // recorrer atraves del ancho de la imagen
+            for (var j = 0; j < width; j++) {
+                for (var c = 0; c < 3; c++) { // Recorrer a través de los canales de color
+                    var suma = 0;
+                    var contador = 0;
+                    // recorrer una ventana alrededor del pixel actual
+                    for (var m = -ventanaTamanio; m <= ventanaTamanio; m++) {
+                        for (var n = -ventanaTamanio; n <= ventanaTamanio; n++) {
+                            var x = j + n;
+                            var y = i + m;
+                            // se verifica  que la coordenada (x, y) este dentro de los limites de la imagen
+                            if (x >= 0 && x < width && y >= 0 && y < height) {
+                                suma += arrImage[c][y][x];
+                                contador++;
+                            }
+                        }
+                    }
+                    // calcular el promedio de los valores dentro de la ventana
+                    var promedio = suma / contador;
+                    var contraste = arrImage[c][i][j] - promedio;
+                    //se  aplica el realce teniendo en cuenta el factor y el contraste
+                    sal[c][i][j] = arrImage[c][i][j] + factor * contraste;
+                    // secasegura de que los valores esten en el rango de 0 - 255
+                    sal[c][i][j] = Math.min(255, Math.max(0, sal[c][i][j]));
+                }
+            }
+        }
+        return sal;
+    };
     MathImg.changeBrightness = function (img, factor) {
         var arrImage = img.getArrayImg();
         var sal = this.initArray(img.getWidth(), img.getHeight());

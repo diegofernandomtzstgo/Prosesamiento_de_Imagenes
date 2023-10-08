@@ -92,6 +92,29 @@ function umbralizado(evt: any): void{
   var imagenSal:ImageType = new ImageType(pantalla1, imgLocal.getImage());
   imagenSal.imageArray2DtoData(pantalla2, MathImg.toUmbral(imagenSal, umbral));
 }
+
+function realceImagen(evt: any): void {
+  var args = prompt('Ingresa el factor de realce');
+  var factor = parseFloat(args);
+  var imagenSal: ImageType = new ImageType(pantalla1, imgLocal.getImage());
+  imagenSal.imageArray2DtoData(pantalla2, MathImg.realce(imagenSal, factor));
+}
+
+
+
+function realceImagen2(evt: any): void {
+  //solicitar dos  datos por comas
+  var args = prompt('Ingresa el factor de realce realce separados por comas)');
+   // Separar los parametros ingresados por comas y convertirlos en numeros de punto flotante
+    var parametros = args.split(',').map(elem =>parseFloat(elem));
+      // obtener la ventana de realce del primer elemento y el factor de realce del segundo elemento
+    var ventana = parametros[0];
+    var factor = parametros[1];
+    var imagenSal: ImageType = new ImageType(pantalla1, imgLocal.getImage());
+    imagenSal.imageArray2DtoData(pantalla2, MathImg.realce2(imagenSal, ventana, factor));
+}
+
+
 function desfaseX(evt: any): void{
   var args = prompt('Ingresa el valor del desfase en X');
   var des = parseFloat(args);
@@ -455,6 +478,8 @@ document.getElementById("op-tricolor").addEventListener('click', convertirTricol
 document.getElementById("op-tricolor-horizontal").addEventListener('click', convertirTricolorhorizontal, false);
 document.getElementById("op-tricolorGradual").addEventListener('click', convertirTricolorGradual, false);
 document.getElementById("op-marciano").addEventListener('click', convertirEfectoMarciano, false);
+document.getElementById("op-realce").addEventListener('click', realceImagen, false);
+document.getElementById("op-realce2").addEventListener('click', realceImagen2, false);
 document.getElementById("op-gamma").addEventListener('click', correccionGamma, false);
 document.getElementById("op-umbral1").addEventListener('click', umbralizado, false);
 document.getElementById("op-umbral-2-limites").addEventListener('click', umbral2limites, false);

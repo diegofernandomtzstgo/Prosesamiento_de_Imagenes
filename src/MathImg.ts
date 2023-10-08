@@ -430,6 +430,63 @@ public static toMartianEffect(img: ImageType): number[][][] {
     return sal;
   }
 
+  public static realce(img: ImageType, factor: number): number[][][] {
+    // Obtener el arreglo 3D de la imagen
+    var arrImage: number[][][] = img.getArrayImg();
+    // Crear el arreglo de salida
+    var sal: number[][][] = this.initArray(img.getWidth(), img.getHeight());
+    //recorrer atravez de la altura de la imagen
+    for (let i = 0; i < img.getHeight(); i++) {
+      for (let j = 0; j < img.getWidth(); j++) { //recorrer atravez del ancho  de la imagen
+        for (let k = 0; k < 3; k++) {// recorre atravez de los canales de color
+          // aplicar el realce multiplicando el valor del pixel por el  factor
+          sal[k][i][j] = arrImage[k][i][j] * factor;
+          //  los valores estén en el rango 0 - 255
+          sal[k][i][j] = Math.min(255, Math.max(0, sal[k][i][j]));
+        }
+      }
+    }
+    return sal;
+}
+public static realce2(img: ImageType, ventanaTamanio: number, factor: number): number[][][] {
+   // obtener el arreglo 3D de la imagen
+  const arrImage: number[][][] = img.getArrayImg();
+  const width = img.getWidth();
+  const height = img.getHeight();
+  const sal: number[][][] = this.initArray(width, height);
+// recorrer atraves de la altura de la imagen
+  for (let i = 0; i < height; i++) {
+    // recorrer atraves del ancho de la imagen
+      for (let j = 0; j < width; j++) {
+          for (let c = 0; c < 3; c++) {// Recorrer a través de los canales de color
+              let suma = 0;
+              let contador = 0;
+              // recorrer una ventana alrededor del pixel actual
+              for (let m = -ventanaTamanio; m <= ventanaTamanio; m++) {
+                  for (let n = -ventanaTamanio; n <= ventanaTamanio; n++) {
+                      const x = j + n;
+                      const y = i + m;
+                       // se verifica  que la coordenada (x, y) este dentro de los limites de la imagen
+                      if (x >= 0 && x < width && y >= 0 && y < height) {
+                          suma += arrImage[c][y][x];
+                          contador++;
+                      }
+                  }
+              }
+                 // calcular el promedio de los valores dentro de la ventana
+              const promedio = suma / contador;
+              const contraste = arrImage[c][i][j] - promedio;
+              //se  aplica el realce teniendo en cuenta el factor y el contraste
+              sal[c][i][j] = arrImage[c][i][j] + factor * contraste;
+                 // secasegura de que los valores esten en el rango de 0 - 255
+              sal[c][i][j] = Math.min(255, Math.max(0, sal[c][i][j]));
+          }
+      }
+  }
+
+  return sal;
+}
+
   public static changeBrightness(img: ImageType, factor: number): number[][][] {
     var arrImage: number[][][] = img.getArrayImg();
     var sal: number[][][] = this.initArray(img.getWidth(), img.getHeight());
